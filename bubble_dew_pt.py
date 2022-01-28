@@ -9,16 +9,25 @@ x_e = 0.3
 
 def two_species_bubble_pt(t_min, t_max, p_total, a, b, x_a, x_b):
     '''
-    (int, int, int or float, list, list, float, float) -> int, float or -1 for failed case
+    (int, int, int or float, list, list, float, float) -> tuple(int, float) or -1 for failed case
 
     This function takes the minimum and maximum of the temperature range you would like to check
         t_min and t_max
-    the total pressure the system will be
+    the total pressure the system will be in mmHg (millimeters of Mercury) or the equivalent : torr
         p_total
     A list for each of the antoine's equation constants for species "a" and "b" in the order [A,B,C].
         a and b
     the liquid mole fraction of species "a" and "b"
         x_a and x_b
+    
+    It returns a tuple holding the Temperature that satisfies Raoult's Law
+    and the total pressure that the temperature results in.
+    
+    #Antoine's constants: [A, B, C]
+    >>>a = [7.11714, 1210.595, 229.664] #acetone
+    >>>e = [8.11220, 1592.864, 226.184] #ethanol
+    >>>two_species_bubble_pt(50, 100, 760, a, b, 0.7, 0.3)
+    (61.87395832281134, 760.0728705051014)
     '''
     num_checkpoints = (t_max - t_min) * 900
     t_range = linspace(t_min, t_max, num_checkpoints)
@@ -56,6 +65,16 @@ def two_species_dew_pt(t_min, t_max, p_total, a, b, y_a, y_b):
         a and b
     the vapour mole fraction of species "a" and "b"
         y_a and y_b
+    
+    It returns a tuple holding the Temperature that satisfies the condition.
+    and the sum of the liquid mole fractions which should be close to the integer 1.
+    
+        
+        #Antoine's constants: [A, B, C]
+    >>>a = [7.11714, 1210.595, 229.664] #acetone
+    >>>e = [8.11220, 1592.864, 226.184] #ethanol
+    >>>two_species_dew_pt(50, 100, 760, a, b, 0.7, 0.3)
+    (66.06428895382723, 1.0006609870410603)
     '''
     num_checkpoints = (t_max - t_min) * 9000
     t_range = linspace(t_min, t_max, num_checkpoints)
