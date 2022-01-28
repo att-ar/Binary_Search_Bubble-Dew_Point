@@ -102,4 +102,3 @@ def two_species_dew_pt(t_min, t_max, p_total, a, b, y_a, y_b):
             return (t_range[m], test_goal*p_total)
     return -1
 
-two_species_dew_pt(0,110,760,a,e,x_a,x_e)
