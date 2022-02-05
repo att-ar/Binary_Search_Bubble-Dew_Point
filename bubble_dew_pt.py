@@ -1,25 +1,5 @@
 from numpy import linspace
 
-#Antoine's constants: [A, B, C]
-a = [7.11714, 1210.595, 229.664] #acetone
-e = [8.11220, 1592.864, 226.184] #ethanol
-n_hp = [6.90253, 1267.828, 216.823] #n-heptane
-n_hx = [6.88555, 1175.817, 224.477] #n-hexane
-m = [8.08097, 1582.271, 239.726] #methanol smaller temp range
-m_l = [7.87863, 1473.11, 230.0] #methanol larger temp range
-n_p = [6.84471, 1060.793, 231.541] #(normal) n-pentane
-i_p = [6.73457, 992.019, 229.564] #(isopentane) i-pentane
-one_p = [7.74416, 1437.686, 198.463] #1-propanol
-s = [7.06623, 1507.434, 214.985] #styrene
-t = [6.95805, 1346.773, 219.693] #toluene
-w_low = [8.10765, 1750.286, 235.000] #water 0 to 60 C
-w_high = [7.96681, 1668.210, 228.000] #water 60 to 150 C
-#liquid composition (mol fraction)
-x_np = 0.5
-x_ip = 0.5
-#vapour composition (mol fraction)
-y_s = 0.65
-y_t = 0.35
 
 def two_species_bubble_pt(t_min, t_max, p_total, a, b, x_a, x_b):
     '''
@@ -62,7 +42,7 @@ def two_species_bubble_pt(t_min, t_max, p_total, a, b, x_a, x_b):
         elif p_total + 0.1 < p_sol:
             j = m - 1 #the opposite of whats happenig above for i
 
-        else:# p_total - 0.5 < p_sol < p_total + 0.5: #if the pressure match up, the temperature has been found
+        else:# p_total - 0.1 < p_sol < p_total + 0.1: #if the pressure match up, the temperature has been found
             return {
             "Temp (Celsius)" : round(t_range[m], 3),
             "Vapour pressure of species a (mmHg)" : round(10**( a[0] - ( a[1] / (t_range[m] + a[2]) ) ), 3),
@@ -114,7 +94,8 @@ def two_species_dew_pt(t_min, t_max, p_total, a, b, y_a, y_b):
         elif 1.002 < test_goal * p_total:
             i = m + 1 #the opposite of whats happenig above for i
 
-        else:# p_total - 0.5 < p_sol < p_total + 0.5: #if the pressure match up, the temperature has been found
+        else: #If the sum of the liquid mole fractions equal 1 then it worked and the results are returned
+            #I can take this part out of the loop and get a more accurate result, but it is not needed
             return {
             "Temp (Celsius)" : round(t_range[m], 3),
             "Vapour pressure of species a (mmHg)" : round(10**( a[0] - ( a[1] / (t_range[m] + a[2]) ) ), 3),
@@ -170,13 +151,13 @@ def temperature_pressure_finder(t_min, t_max, a, b, y_a, y_b, x_a, x_b):
         + x_b * y_a * 10**( b[0] - ( b[1] / (t_range[m] + b[2]) ) )  \
         / 10**( a[0] - ( a[1] / (t_range[m] + a[2]) ) )
 
-        #The pressure of the solution mixture
+        #The derived equation being checked, if it is valid then the results are returned
         if (1 - x_a*y_a - x_b*y_b) - 0.002 > test_goal: #the temperature is above the needed temperature
             j = m - 1 #moving the right index to the middle point, becuase everything above middle point is unneeded
         elif (1 - x_a*y_a - x_b*y_b) + 0.002 < test_goal:
             i = m + 1 #the opposite of whats happenig above for i
 
-        else:# p_total - 0.5 < p_sol < p_total + 0.5: #if the pressure match up, the temperature has been found
+        else:
             return {
             "Temp (Celsius)" : round(t_range[m], 3),
             "Vapour pressure of species a (mmHg)" : round(10**( a[0] - ( a[1] / (t_range[m] + a[2]) ) ), 3),
@@ -185,9 +166,3 @@ def temperature_pressure_finder(t_min, t_max, a, b, y_a, y_b, x_a, x_b):
             round(x_a * 10**( a[0] - ( a[1] / (t_range[m] + a[2]) ) )  +  x_b * 10**( b[0] - ( b[1] / (t_range[m] + b[2]) ) ), 3)
             }
     return -1
-
-## Function calls for me
-
-two_species_bubble_pt(0, 110, 760, m, one_p, 0.15, 0.85)
-two_species_dew_pt(0, 110, 760, m, one_p, 0.3, 0.3)
-temperature_pressure_finder(0, 130, a, w_high, 0.7, 0.3, 0.3, 0.7)
