@@ -142,8 +142,8 @@ def temperature_pressure_finder(t_min, t_max, a, b, y_a, y_b, x_a, x_b):
         #loop for binary search
         m = (i + j) // 2 # divided the range in two so that the search is log(N)/log(2)
 
-        #Use Raoult's law to trial and error until I find the temperature that matches the vapour pressures
-        #to the total pressure
+        #Use Raoult's law to trial and error until I find the temperature that
+        # results in the vapour pressures matching the total pressure
 
         #t_range[m] is the temperature being checked for validity.
         test_goal =  x_a * y_b * 10**( a[0] - ( a[1] / (t_range[m] + a[2]) ) )  \
@@ -155,7 +155,7 @@ def temperature_pressure_finder(t_min, t_max, a, b, y_a, y_b, x_a, x_b):
         if (1 - x_a*y_a - x_b*y_b) - 0.002 > test_goal: #the temperature is above the needed temperature
             j = m - 1 #moving the right index to the middle point, becuase everything above middle point is unneeded
         elif (1 - x_a*y_a - x_b*y_b) + 0.002 < test_goal:
-            i = m + 1 #the opposite of whats happenig above for i
+            i = m + 1 #the opposite of whats happening above for j
 
         else:
             return {
